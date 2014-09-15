@@ -6,7 +6,7 @@ import (
 )
 
 type TestController struct {
-	*Base
+	Base
 }
 
 func (t *TestController) Index() {

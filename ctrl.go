@@ -59,7 +59,7 @@ func controllerType(action reflect.Value) (reflect.Type, error) {
 		t = t.Elem()
 	}
 
-	if !t.Implements(interfaceType) {
+	if !reflect.PtrTo(t).Implements(interfaceType) {
 		return t, errors.New("Controller does not implement ctrl.Controller interface")
 	}
 
