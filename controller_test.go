@@ -1,4 +1,4 @@
-package ctrl
+package controller
 
 import (
 	"reflect"
@@ -9,7 +9,15 @@ type TestController struct {
 	Base
 }
 
-func (t *TestController) Index() {
+func (t *TestController) Index() error {
+	return nil
+}
+
+func (t *TestController) BadAction() {
+}
+
+func (t *TestController) BadAction2() string {
+	return ""
 }
 
 type NoController struct {
@@ -24,6 +32,8 @@ func TestValidateAction(t *testing.T) {
 		valid  bool
 	}{
 		{(*TestController).Index, true},
+		{(*TestController).BadAction, false},
+		{(*TestController).BadAction2, false},
 		{(*NoController).Foo, false},
 		{"bad", false},
 	}
