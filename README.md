@@ -15,6 +15,7 @@ request.
 ## Example
 
 ``` go
+package main
 
 import (
   "net/http"
@@ -22,7 +23,7 @@ import (
   "github.com/codegangsta/controller"
 )
 
-type MyController {
+type MyController struct {
   controller.Base
 }
 
