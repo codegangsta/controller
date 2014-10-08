@@ -33,18 +33,42 @@ type Base struct {
 	ResponseWriter http.ResponseWriter
 }
 
+// Init initializes the base controller with a ResponseWriter and Request.
+// Embedders of this struct should remember to call Init if the embedder is
+// implementing the Init function themselves.
 func (b *Base) Init(rw http.ResponseWriter, r *http.Request) error {
 	b.Request, b.ResponseWriter = r, rw
 	return nil
 }
 
+// Destroy performs cleanup for the base controller
 func (b *Base) Destroy() {
 }
 
+// Error will send an HTTP error to the given ResponseWriter from Init
 func (b *Base) Error(code int, error string) {
 	http.Error(b.ResponseWriter, error, code)
 }
 
+// Action takes a method expression and translates it into a callable
+// http.Handler which, when called:
+//
+// 		1. Constructs a controller instance
+// 		2. Initializes the controller via the Init function
+// 		3. Invokes the Action method referenced by the method expression
+// 		4. Calls destroy on the controller
+//
+// This flow allows for similar logic to be cleanly reused while data is no
+// longer shared between requests. This is because a new Controller instance
+// will be constructed every time the returned http.Handler's ServeHTTP method
+// is invoked.
+//
+// An example of a valid method expression is:
+//
+// 		controller.Action((*MyController).Index)
+//
+// Where MyController is an implementor of the Controller interface and Index
+// is a method on MyController that takes no arguments and returns an err
 func Action(action interface{}) http.Handler {
 	val := reflect.ValueOf(action)
 	t, err := controllerType(val)
